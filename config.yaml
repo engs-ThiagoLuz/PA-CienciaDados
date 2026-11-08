@@ -8,3 +8,21 @@ http:
   max_tentativas: 5
   backoff_segundos: 2
   pausa_entre_paginas: 0.5
+openmeteo:
+  base_url: https://archive-api.open-meteo.com/v1/archive
+  user_agent: "campo-real-dw/1.0 (trabalho academico)"
+  data_inicio: "2025-01-01"    # a geracao (medicao_geracao) so existe em 2025
+  data_fim: "2025-12-31"
+  timezone: America/Sao_Paulo
+  wind_speed_unit: ms
+  pausa_entre_chamadas: 1.0
+  forcar_reextracao: false     # true baixa de novo mesmo que a raw ja exista
+  limites_brasil: {lat_min: -34.0, lat_max: 5.5, lon_min: -74.0, lon_max: -34.0}
+  unidades_esperadas:          # se a API mudar a unidade, o tratamento para com erro
+    temperature_2m: "°C"
+    precipitation: "mm"
+    cloud_cover: "%"
+    shortwave_radiation: "W/m²"
+    wind_speed_10m: "m/s"
+    wind_speed_100m: "m/s"
+    wind_direction_100m: "°"
