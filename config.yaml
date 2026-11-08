@@ -1,0 +1,10 @@
+ccee:
+  base_url: https://dadosabertos.ccee.org.br/api/3/action
+  dataset_id: pld_horario
+  page_size: 5000
+  resource_ids: {}        # {2025: "uuid...", 2026: "uuid..."} (preencher após a célula 4)
+http:
+  timeout: 60
+  max_tentativas: 5
+  backoff_segundos: 2
+  pausa_entre_paginas: 0.5
