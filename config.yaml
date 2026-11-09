@@ -26,3 +26,16 @@ openmeteo:
     wind_speed_10m: "m/s"
     wind_speed_100m: "m/s"
     wind_direction_100m: "°"
+
+qualidade:
+  periodo_inicio: "2025-01-01 00:00:00"   # período que a medição de geração deve cobrir
+  periodo_fim: "2025-12-31 23:00:00"
+  atraso_max_horas: 24                    # recebimento depois disso conta como atrasado
+  tolerancia_parada_envio_horas: 24       # usina sem dados há mais que isso "parou de enviar"
+  sequencia_travada_min_horas: 6          # horas seguidas com o mesmo valor positivo
+  janela_benchmark_dias: 7                # vizinhança usada para validar a correção de unidade
+  tolerancia_correcao: 0.5                # valor corrigido deve ficar a +-50% da mediana da vizinhança
+  limites_brasil: {lat_min: -34.0, lat_max: 5.5, lon_min: -74.0, lon_max: -34.0}
+  pld_limites:                            # ANEEL: PLD minimo e maximo horario (R$/MWh)
+    2025: {min: 58.60, max_horario: 1542.23}
+    2026: {min: 57.31, max_horario: 1611.04}
