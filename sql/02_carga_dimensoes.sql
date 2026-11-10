@@ -1,11 +1,8 @@
-/* =====================================================================
-   CAMPO REAL ENERGIA · DATA WAREHOUSE
-   Script 02 · Carga das dimensões simples (tempo, submercado, tipo de
-   parada, origem do dado). Reexecutável.
-
+/*
+  
    Lê apenas da camada tratada (schemas qualidade e externo) e do cadastro
    de submercados/feriados da origem. A dim_usina (SCD2) é o script 03.
-   ===================================================================== */
+*/
 
 SET search_path TO dw_campo_real, public;
 
@@ -16,10 +13,10 @@ TRUNCATE fato_geracao_horaria, fato_pld_horario, fato_clima_horario, fato_indisp
 RESTART IDENTITY;
 
 
-/* ---------------------------------------------------------------------
-   Feriados: 2025 da origem + 2026 complementado pelo grupo (a origem só tem 2025)
+/*
+   Feriados: 2025 da origem + 2026 complementado pelo grupo
    CONFERIR as datas de 2026 num calendário oficial antes de publicar.
-   --------------------------------------------------------------------- */
+ */
 INSERT INTO stg_feriado (data, descricao, tipo, origem_dado)
 SELECT data, descricao, tipo, 'origem' FROM campo_real_energia.feriado_nacional;
 
@@ -92,8 +89,8 @@ ORDER BY 1;
 */
 INSERT INTO dim_tempo (sk_tempo, nome_mes, ano_mes, nome_dia_semana, faixa_horaria,
                        estacao_ano, periodo_hidrologico, patamar_carga)
-VALUES (-1, 'Desconhecido', 'N/D', 'Desconhecido', 'Desconhecida',
-        'Desconhecida', 'N/D', 'N/D');
+VALUES (-1, 'Desconhecido', 'N/D', 'Desconhecido', 'N/D',
+        'N/D', 'N/D', 'N/D');
 
 INSERT INTO dim_tempo (sk_tempo, data_hora, data, ano, trimestre, mes, nome_mes, ano_mes, dia, dia_do_ano,
                        semana_iso, dia_da_semana, nome_dia_semana, hora, faixa_horaria, fim_de_semana,

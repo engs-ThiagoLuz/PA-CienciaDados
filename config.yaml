@@ -39,3 +39,8 @@ qualidade:
   pld_limites:                            # ANEEL: PLD minimo e maximo horario (R$/MWh)
     2025: {min: 58.60, max_horario: 1542.23}
     2026: {min: 57.31, max_horario: 1611.04}
+
+dw:
+  sql_dir: sql
+  recriar_dw: false      # true roda o 01 (APAGA o schema, inclusive o histórico SCD2)
+  demo_scd2: false       # true simula uma mudança de potência dentro de uma transação e desfaz
