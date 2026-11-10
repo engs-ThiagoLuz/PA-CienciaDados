@@ -28,8 +28,8 @@ SELECT u.cod_usina, u.nome,
        u.flags AS flags_qualidade
 FROM qualidade.usina_tratada u
 JOIN campo_real_energia.fonte_energia f ON f.id_fonte = u.id_fonte
-JOIN campo_real_energia.submercado    s ON s.cod_submercado = u.cod_submercado
-LEFT JOIN externo.clima_ponto        cp ON cp.cod_usina = u.cod_usina;
+JOIN campo_real_energia.submercado s ON s.cod_submercado = u.cod_submercado
+LEFT JOIN externo.clima_ponto cp ON cp.cod_usina = u.cod_usina;
 
 -- 0) Membro desconhecido
 INSERT INTO dim_usina (sk_usina, cod_usina, nome, cod_fonte, descricao_fonte, cod_submercado, nome_submercado,
@@ -41,13 +41,13 @@ ON CONFLICT (sk_usina) DO NOTHING;
 -- 1) Tipo 2: fecha a versão atual se algum atributo Tipo 2 mudou
 UPDATE dim_usina d
 SET dt_fim_vigencia = CURRENT_DATE,
-    registro_atual  = FALSE
+    registro_atual = FALSE
 FROM stg_usina s
 WHERE d.cod_usina = s.cod_usina
   AND d.registro_atual
-  AND (d.potencia_mw     IS DISTINCT FROM s.potencia_mw
-    OR d.situacao        IS DISTINCT FROM s.situacao
-    OR d.cod_submercado  IS DISTINCT FROM s.cod_submercado);
+  AND (d.potencia_mw IS DISTINCT FROM s.potencia_mw
+    OR d.situacao IS DISTINCT FROM s.situacao
+    OR d.cod_submercado IS DISTINCT FROM s.cod_submercado);
 
 -- 2) Insere a nova versão: usinas novas (desde 1900) ou versões recém-fechadas 
 INSERT INTO dim_usina (cod_usina, nome, cod_fonte, descricao_fonte, renovavel, intermitente,
@@ -69,22 +69,22 @@ WHERE NOT EXISTS (SELECT 1 FROM dim_usina d WHERE d.cod_usina = s.cod_usina AND 
 -- 3) Tipo 1: sobrescreve os demais atributos em todas as versões da usina
 --    (nome_submercado fica de fora: depende do atributo Tipo 2 cod_submercado)
 UPDATE dim_usina d
-SET nome                 = s.nome,
-    cod_fonte            = s.cod_fonte,
-    descricao_fonte      = s.descricao_fonte,
-    renovavel            = s.renovavel,
-    intermitente         = s.intermitente,
-    uf                   = s.uf,
-    municipio            = s.municipio,
-    latitude             = s.latitude,
-    longitude            = s.longitude,
+SET nome = s.nome,
+    cod_fonte = s.cod_fonte,
+    descricao_fonte = s.descricao_fonte,
+    renovavel = s.renovavel,
+    intermitente = s.intermitente,
+    uf = s.uf,
+    municipio = s.municipio,
+    latitude = s.latitude,
+    longitude = s.longitude,
     data_inicio_operacao = s.data_inicio_operacao,
-    lat_clima            = s.lat_clima,
-    lon_clima            = s.lon_clima,
-    lat_grade_clima      = s.lat_grade_clima,
-    lon_grade_clima      = s.lon_grade_clima,
-    elevacao_m           = s.elevacao_m,
+    lat_clima = s.lat_clima,
+    lon_clima = s.lon_clima,
+    lat_grade_clima = s.lat_grade_clima,
+    lon_grade_clima = s.lon_grade_clima,
+    elevacao_m = s.elevacao_m,
     criterio_ponto_clima = s.criterio_ponto_clima,
-    flags_qualidade      = s.flags_qualidade
+    flags_qualidade = s.flags_qualidade
 FROM stg_usina s
 WHERE d.cod_usina = s.cod_usina;

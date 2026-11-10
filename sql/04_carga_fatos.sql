@@ -29,7 +29,7 @@ SELECT t.sk_tempo,
        m.energia_mwh,
        m.energia_mwh_original,
        m.disponibilidade_mw,
-       COALESCE(du.potencia_mw, 0),                                   -- potência vigente x 1 hora
+       COALESCE(du.potencia_mw, 0), -- potência vigente x 1 hora
        m.recebido_em,
        CASE WHEN m.recebido_em IS NULL THEN NULL
             ELSE (EXTRACT(EPOCH FROM (m.recebido_em - m.data_hora)) / 60)::int END,
@@ -40,12 +40,12 @@ SELECT t.sk_tempo,
        NULLIF(m.flags, '')
 FROM qualidade.medicao_geracao_tratada m
 JOIN qualidade.usina_tratada ut ON ut.id_usina = m.id_usina
-JOIN dim_tempo t                ON t.data_hora = m.data_hora
-LEFT JOIN dim_usina du          ON du.cod_usina = ut.cod_usina
+JOIN dim_tempo t ON t.data_hora = m.data_hora
+LEFT JOIN dim_usina du ON du.cod_usina = ut.cod_usina
                                AND m.data_hora::date >= du.dt_inicio_vigencia
                                AND m.data_hora::date <  du.dt_fim_vigencia
-LEFT JOIN dim_submercado ds     ON ds.cod_submercado = du.cod_submercado
-LEFT JOIN dim_origem_dado o     ON o.origem = m.origem;
+LEFT JOIN dim_submercado ds ON ds.cod_submercado = du.cod_submercado
+LEFT JOIN dim_origem_dado o ON o.origem = m.origem;
 
 
 /* 
@@ -54,7 +54,7 @@ LEFT JOIN dim_origem_dado o     ON o.origem = m.origem;
 INSERT INTO fato_pld_horario (sk_tempo, sk_submercado, pld_rs_mwh)
 SELECT t.sk_tempo, COALESCE(ds.sk_submercado, -1), p.pld_rs_mwh
 FROM externo.pld_horario p
-JOIN dim_tempo t            ON t.data_hora = p.data_hora
+JOIN dim_tempo t ON t.data_hora = p.data_hora
 LEFT JOIN dim_submercado ds ON ds.cod_submercado = p.cod_submercado;
 
 
@@ -70,8 +70,8 @@ SELECT t.sk_tempo,
        c.temperatura_c, c.precipitacao_mm, c.cobertura_nuvens_pct,
        c.radiacao_w_m2, c.vento_10m_ms, c.vento_100m_ms, c.dir_vento_100m_graus
 FROM externo.clima_horario c
-JOIN dim_tempo t            ON t.data_hora = c.data_hora
-LEFT JOIN dim_usina du      ON du.cod_usina = c.cod_usina
+JOIN dim_tempo t ON t.data_hora = c.data_hora
+LEFT JOIN dim_usina du ON du.cod_usina = c.cod_usina
                            AND c.data_hora::date >= du.dt_inicio_vigencia
                            AND c.data_hora::date <  du.dt_fim_vigencia
 LEFT JOIN dim_submercado ds ON ds.cod_submercado = du.cod_submercado;
@@ -96,8 +96,8 @@ WITH horas AS (
            p.id_parada, p.motivo, p.tipo
     FROM qualidade.parada_tratada p
     JOIN qualidade.usina_tratada ut ON ut.id_usina = p.id_usina
-    JOIN dim_tempo t                ON t.data_hora BETWEEN date_trunc('hour', p.inicio) AND p.fim
-    JOIN dim_usina du               ON du.cod_usina = ut.cod_usina
+    JOIN dim_tempo t ON t.data_hora BETWEEN date_trunc('hour', p.inicio) AND p.fim
+    JOIN dim_usina du ON du.cod_usina = ut.cod_usina
                                    AND t.data >= du.dt_inicio_vigencia
                                    AND t.data <  du.dt_fim_vigencia
     ORDER BY du.sk_usina, t.sk_tempo, p.id_parada
